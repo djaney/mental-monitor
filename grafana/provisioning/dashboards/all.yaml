@@ -1,0 +1,12 @@
+# tell grafana where the dashboard provision files are located
+apiVersion: 1
+
+providers:
+- name: 'default'
+  orgId: 1
+  folder: ''
+  type: file
+  disableDeletion: true
+  updateIntervalSeconds: 5
+  options:
+    path: /var/lib/grafana/dashboards

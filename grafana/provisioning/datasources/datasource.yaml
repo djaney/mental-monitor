@@ -1,0 +1,10 @@
+# Provision datasources (grafana/dashboards/*.json)
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    org_id: 1
+    is_default: true
+    url: http://prometheus:9090

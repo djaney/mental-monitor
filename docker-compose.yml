@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  # Prometheus database
+  prometheus:
+    image: prom/prometheus:v2.7.1
+    ports:
+      - 9090:9090
+    volumes:
+      - /prometheus
+      - ${PWD}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  # Visalization
+  grafana:
+    image: grafana/grafana:5.4.2
+    ports:
+      - 3001:3000
+    environment:
+      - HOME=/usr/share/grafana
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource,grafana-piechart-panel
+      - GF_AWS_PROFILES=default
+      - GF_AWS_default_ACCESS_KEY_ID=${AWS_KEY}
+      - GF_AWS_default_SECRET_ACCESS_KEY=${AWS_SECRET}
+      - GF_AWS_default_REGION=ap-southeast-1
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    volumes:
+      - /var/lib/grafana
+      - ${PWD}/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ${PWD}/grafana/provisioning:/etc/grafana/provisioning/
+      - ${PWD}/grafana/dashboards:/var/lib/grafana/dashboards
+  faces-exporter:
+    build: .
+    environment:
+      - FLASK_ENV=${FLASK_ENV}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - USE_API=${USE_API}
+    ports:
+      - 9901:9901
+    volumes:
+      - ${PWD}:/app
+    devices:
+      - /dev/video0:/dev/video0
